@@ -8,7 +8,7 @@
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Inception-lightgrey)]()
 
-AWS Summit Japan 2026 AI-DLC ハッカソン提出物。  
+AWS Summit Japan 2026 AI-DLC（AI-Driven Development Life Cycle）ハッカソン提出物。  
 共働き家庭の「今日何作ろう」を考えなくする献立AI。家族の冷蔵庫・仕事疲労・体調をリアルタイム統合し、親等モデルで親世帯・兄弟まで自然に拡張します。
 
 ---

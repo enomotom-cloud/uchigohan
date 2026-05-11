@@ -3,7 +3,7 @@
 > **サボるほど、食卓が笑う。**
 > 思考はAIに、味付けは愛で。
 
-AWS Summit Japan 2026 AI-DLC ハッカソン提出物（Inceptionフェーズ成果物）
+AWS Summit Japan 2026 AI-DLC（AI-Driven Development Life Cycle）ハッカソン提出物（Inceptionフェーズ成果物）
 
 ---
 

@@ -197,7 +197,7 @@ graph TB
 
 ## 8. 制約条件
 
-- **技術**：AWSサービス利用必須、AI-DLCメソドロジー準拠、LINE Messaging API利用前提
+- **技術**：AWSサービス利用必須、AI-DLC（AI-Driven Development Life Cycle）メソドロジー準拠、LINE Messaging API利用前提
 - **チーム**：2名構成、IoT/ハード自作は不得意領域
 - **時間**：書類審査5/10、予選5/30、決勝6/26
 - **法令**：要配慮個人情報（健康診断結果）の取扱い、医師法の越境禁止

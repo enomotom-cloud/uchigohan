@@ -1,6 +1,6 @@
 # DECISIONS_AND_OPEN_QUESTIONS — うちごはん
 
-> AWS Summit Japan 2026 AI-DLC ハッカソン 書類審査用 最終ロックドキュメント
+> AWS Summit Japan 2026 AI-DLC（AI-Driven Development Life Cycle）ハッカソン 書類審査用 最終ロックドキュメント
 > 作成日: 2026-05-10
 > 用途: claude.ai での議論成果を Claude Code に引き継ぎ、aidlc-docs/ 一式生成と GitHub 提出までを実行させる
 

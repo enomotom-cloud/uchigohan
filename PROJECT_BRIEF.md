@@ -6,9 +6,9 @@
 
 ## ハッカソン概要
 
-- **イベント**: AWS Summit Japan 2026 AI-DLC ハッカソン
+- **イベント**: AWS Summit Japan 2026 AI-DLC（AI-Driven Development Life Cycle）ハッカソン
 - **テーマ**: 「人をダメにするサービスを考えよう」
-- **メソドロジー**: AI-DLC (AI-Driven Development Life Cycle)。Inception → Construction → Operations の3フェーズ。aidlc-workflows + Kiro IDE 使用前提
+- **メソドロジー**: AI-DLC。Inception → Construction → Operations の3フェーズ。aidlc-workflows + Kiro IDE 使用前提
 - **書類審査締切**: 2026-05-10（Inception成果物のみで審査）
 - **予選**: 2026-05-30（MVPデモ）
 - **決勝**: 2026-06-26（幕張メッセでプレゼン＋AWSデプロイ）
