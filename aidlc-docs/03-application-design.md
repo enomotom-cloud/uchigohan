@@ -60,6 +60,8 @@ graph LR
     subgraph AWS["AWS 領域：うちごはんの自前実装"]
         APIGW[API Gateway]
         LAMBDA[Lambda]
+        GUARD["Allergen / Safety Guard<br/>Phase 1 自前<br/>WL + 医療助言NGフレーズ"]
+        GUARD_P2["Bedrock Guardrails<br/>Phase 2 構想<br/>本格ガードレール統合"]
         BEDROCK[Bedrock<br/>Sonnet 4.6 / Haiku 4.5]
         DDB[(DynamoDB<br/>家族・在庫・履歴)]
         COMP[Comprehend<br/>感情・疲労分析]
@@ -82,7 +84,9 @@ graph LR
     LINE --> APIGW
     WEB -.->|LINE 不可時| APIGW
     APIGW --> LAMBDA
-    LAMBDA --> BEDROCK
+    LAMBDA --> GUARD
+    GUARD --> BEDROCK
+    GUARD -.->|拡張構想| GUARD_P2
     LAMBDA --> COMP
     LAMBDA --> REKO
     LAMBDA --> DDB
@@ -99,6 +103,8 @@ graph LR
     style BEDROCK fill:#FCC800,stroke:#2A1F12,stroke-width:2px,color:#000
     style LINE fill:#06C755,stroke:#2A1F12,color:#fff
     style WEB fill:#E8E8E8,stroke:#2A1F12,stroke-dasharray: 5 5,color:#000
+    style GUARD fill:#FFE0B2,stroke:#2A1F12,stroke-width:2px,color:#000
+    style GUARD_P2 fill:#E8E8E8,stroke:#2A1F12,stroke-dasharray: 5 5,color:#000
     style RAKUTEN fill:#BF0000,stroke:#2A1F12,color:#fff
     style OISIX fill:#E8E8E8,stroke:#2A1F12,stroke-dasharray: 5 5,color:#000
     style ASKEN fill:#E8E8E8,stroke:#2A1F12,stroke-dasharray: 5 5,color:#000
@@ -419,6 +425,46 @@ Tier 1-2  Tier 3
 | 個人情報 | 健康診断情報はAmazon Comprehend Medicalの匿名化を経由（Phase 2） |
 | 多言語 | 日本語のみ（Phase 1）。海外展開時は英語追加 |
 | デバイス | LINE Messaging API経由のため、LINE対応端末すべて |
+
+---
+
+## ガードレール設計
+
+要配慮個人情報（健康データ、アレルギー）と AI 出力の安全性を担保するため、
+うちごはんは AI 入出力に対する **段階的ガードレール** を設計します。
+うちごはんの哲学「良い怠惰／悪い怠惰」を書き手側にも適用し、
+「実装します」と断言せず、Phase 1 で確実な最低限を自前実装し、
+Phase 2 で AWS マネージドサービスへの統合を目指します。
+
+### 4 層のガードレール構造
+
+| 層 | 役割 | 実装位置 | Phase |
+|---|---|---|---|
+| 1. 家族プロフィール参照 | AI 入力時にユーザーの健康フラグ・アレルギー・苦手食材をプロンプトに注入 | Lambda（プロンプト構築段） | Phase 1 自前実装 |
+| 2. AI 出力後の NG 食材チェック | AI 提案レシピを楽天レシピ ID で参照し、家族のアレルギー・苦手食材を含むものを除外（ホワイトリスト方式） | Lambda（後処理） | Phase 1 自前実装 |
+| 3. 医療助言禁止フレーズ統制 | 月次レポート等の出力テキストから「診断」「処方」「治療」等の禁止語彙を正規表現／LLM フィルタで除外 | Lambda（後処理）+ Bedrock プロンプト統制 | Phase 1 自前実装 |
+| 4. Bedrock Guardrails 統合 | AWS Bedrock のネイティブガードレール機能を統合し、安全性管理を AWS マネージドに委譲 | Bedrock | **Phase 2 構想・本実装を目指します** |
+
+### Phase 1 MVP の最低限の保護
+
+書類審査・予選 MVP 段階では、層 1〜3 を自前実装で最低限カバーします：
+
+- **層 1（プロンプト注入）**：DynamoDB の `healthProfile.allergies` と `preferenceProfile.dislikedFoods` を毎回プロンプトに含める
+- **層 2（食材ホワイトリスト）**：楽天レシピ API の `recipeIngredient` フィールドを取得し、アレルギー食材が含まれないことを照合
+- **層 3（医療助言フレーズ統制）**：プロンプトテンプレートに「診断・処方助言は行わない」を明記、出力後に禁止フレーズの存在を再チェック
+
+### Phase 2 で本実装を目指すもの
+
+- **層 4（Bedrock Guardrails）**：AWS Bedrock の Guardrails 機能を用いて、AI 出力の安全性ポリシー（医療助言、誤情報、有害コンテンツ）を AWS マネージドサービスで一元統制する構造を設計します。Phase 1 では本機能を統合せず、自前の層 1〜3 で最低限の保護を担保します。
+
+### 「悪い怠惰」を避けるガードレール思想
+
+うちごはんの哲学に従い、書き手側も「AI に全てを任せた」と
+言わない構造を取ります。AI 出力の正しさは、AI 自身ではなく、
+**入力時の人間ルール（家族プロフィール）** と
+**出力時の人間ルール（ホワイトリスト・禁止フレーズ）** で
+担保する設計です。Bedrock Guardrails の統合は Phase 2 構想であり、
+それまでは自前ガードで責任を引き受けます。
 
 ---
 
