@@ -41,8 +41,8 @@
 
 ## システム全体アーキテクチャ
 
-実線はうちごはんが自前で実装する経路、点線は外部サービスとの連携経路です。
-合意未取得の連携先（Oisix、あすけん等）は破線スタイルで明示しています。
+実線はうちごはんが自前で実装する経路、点線は外部サービスとの連携経路または保険経路です。
+合意未取得の連携先（Oisix、あすけん等）と LINE 申請遅延時の自前 Web チャットは破線スタイルで明示しています。
 
 ```mermaid
 graph LR
@@ -53,7 +53,8 @@ graph LR
     end
 
     subgraph Channel["入力チャネル"]
-        LINE[LINE Bot]
+        LINE[LINE Bot<br/>第一選択]
+        WEB[Web チャット<br/>LINE 遅延時の保険]
     end
 
     subgraph AWS["AWS 領域：うちごはんの自前実装"]
@@ -79,6 +80,7 @@ graph LR
     U3 -->|週次受信| LINE
 
     LINE --> APIGW
+    WEB -.->|LINE 不可時| APIGW
     APIGW --> LAMBDA
     LAMBDA --> BEDROCK
     LAMBDA --> COMP
@@ -96,12 +98,16 @@ graph LR
 
     style BEDROCK fill:#FCC800,stroke:#2A1F12,stroke-width:2px,color:#000
     style LINE fill:#06C755,stroke:#2A1F12,color:#fff
+    style WEB fill:#E8E8E8,stroke:#2A1F12,stroke-dasharray: 5 5,color:#000
     style RAKUTEN fill:#BF0000,stroke:#2A1F12,color:#fff
     style OISIX fill:#E8E8E8,stroke:#2A1F12,stroke-dasharray: 5 5,color:#000
     style ASKEN fill:#E8E8E8,stroke:#2A1F12,stroke-dasharray: 5 5,color:#000
 ```
 
-各データソースの合意状態の詳細は本文書の「データソースに関する注記」を参照ください。
+LINE 申請が予選までに完了しないリスクに備え、独自 Web チャット（CloudFront + S3 + Lambda）を
+フォールバックとして用意します。Web チャットは LINE Bot と同じ API Gateway を入口に使うため、
+バックエンドの実装は変更なく差し替え可能な構造です。各データソースの合意状態の詳細は
+本文書の「データソースに関する注記」を参照ください。
 
 ---
 
