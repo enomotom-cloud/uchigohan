@@ -66,6 +66,33 @@ AWS Summit Japan 2026 AI-DLC ハッカソン提出物。
 に陥らないよう自戒します。
 連携は、相手にも価値が生まれる構造でのみ実現を目指します。
 
+### フレーム階層
+
+うちごはんは複数のフレームを持ちますが、中核は **「良い怠惰／悪い怠惰」**
+の哲学です。他のフレームはその哲学の異なる側面の具体化です。
+
+```mermaid
+graph TD
+    A[哲学：良い怠惰／悪い怠惰<br/>テーマ『人をダメにする』への回答]
+    A --> B[価値構造：機能・情緒・関係性<br/>三層の価値体系]
+    A --> C[差別化軸：現在性 × 愛情<br/>2 軸の本質価値]
+    B --> D[実装方針：Tier 1〜4<br/>食材入手の段階設計]
+    C --> D
+    B --> E[作業単位：U1〜U10<br/>AI-DLC Unit 分解]
+    C --> E
+    D --> F[拡張性：親等モデル<br/>1 親等/2 親等/3 親等]
+    E --> F
+
+    style A fill:#FCC800,stroke:#2A1F12,stroke-width:3px,color:#000
+    style B fill:#FFF3CD,stroke:#2A1F12,color:#000
+    style C fill:#FFF3CD,stroke:#2A1F12,color:#000
+    style D fill:#E8F4F8,stroke:#2A1F12,color:#000
+    style E fill:#E8F4F8,stroke:#2A1F12,color:#000
+    style F fill:#D4E9D4,stroke:#2A1F12,color:#000
+```
+
+各フレームの詳細は本書類および aidlc-docs/ 配下のドキュメントを参照ください。
+
 ---
 
 ## 設計思想：良い怠惰／悪い怠惰
