@@ -109,7 +109,7 @@ graph LR
     style WEB fill:#E8E8E8,stroke:#2A1F12,stroke-dasharray: 5 5,color:#000
     style GUARD fill:#FFE0B2,stroke:#2A1F12,stroke-width:2px,color:#000
     style GUARD_P2 fill:#E8E8E8,stroke:#2A1F12,stroke-dasharray: 5 5,color:#000
-    style RAKUTEN fill:#BF0000,stroke:#2A1F12,color:#fff
+    style RAKUTEN fill:#E8E8E8,stroke:#2A1F12,stroke-dasharray: 5 5,color:#000
     style OISIX fill:#E8E8E8,stroke:#2A1F12,stroke-dasharray: 5 5,color:#000
     style ASKEN fill:#E8E8E8,stroke:#2A1F12,stroke-dasharray: 5 5,color:#000
 ```
