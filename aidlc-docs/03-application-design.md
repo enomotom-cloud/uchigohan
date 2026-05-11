@@ -6,7 +6,7 @@
 
 ```mermaid
 graph TB
-    subgraph AI["🤖 AI担当領域（システムに委譲）"]
+    subgraph AI["AI担当領域（システムに委譲）"]
         A1[食材認識]
         A2[疲労推定]
         A3[献立生成]
@@ -15,7 +15,7 @@ graph TB
         A6[レシピリンク選定]
     end
     AI -->|提示 LINE Bot| Human
-    subgraph Human["👨‍👩‍👧 人間担当領域（残す）"]
+    subgraph Human["人間担当領域（残す）"]
         H1[調理]
         H2[味見]
         H3[盛付け]
@@ -51,9 +51,9 @@ graph TB
 ```mermaid
 graph LR
     subgraph User["ユーザー領域"]
-        U1[👤 美咲<br/>共働きの母]
-        U2[👤 雅子<br/>一人暮らしの母]
-        U3[👤 健司<br/>離れた弟]
+        U1[美咲<br/>共働きの母]
+        U2[雅子<br/>一人暮らしの母]
+        U3[健司<br/>離れた弟]
     end
 
     subgraph Channel["入力チャネル"]

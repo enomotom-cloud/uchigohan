@@ -99,11 +99,11 @@ graph TD
 
 ```mermaid
 graph TB
-    subgraph AI["🤖 AIに渡す（= 良い怠惰）"]
+    subgraph AI["AIに渡す（= 良い怠惰）"]
         A1[献立を考える、選ぶ、調整する]
         A2[在庫管理、栄養計算、買い物リスト生成]
     end
-    subgraph Human["👨‍👩‍👧 人間に残す（= 人をダメにしない）"]
+    subgraph Human["人間に残す（= 人をダメにしない）"]
         H1[実際に作る、味見する、盛り付ける]
         H2[食卓を囲む、話す、分かち合う]
     end
