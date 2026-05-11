@@ -41,49 +41,67 @@
 
 ## システム全体アーキテクチャ
 
+実線はうちごはんが自前で実装する経路、点線は外部サービスとの連携経路です。
+合意未取得の連携先（Oisix、あすけん等）は破線スタイルで明示しています。
+
+```mermaid
+graph LR
+    subgraph User["ユーザー領域"]
+        U1[👤 美咲<br/>共働きの母]
+        U2[👤 雅子<br/>一人暮らしの母]
+        U3[👤 健司<br/>離れた弟]
+    end
+
+    subgraph Channel["入力チャネル"]
+        LINE[LINE Bot]
+    end
+
+    subgraph AWS["AWS 領域：うちごはんの自前実装"]
+        APIGW[API Gateway]
+        LAMBDA[Lambda]
+        BEDROCK[Bedrock<br/>Sonnet 4.6 / Haiku 4.5]
+        DDB[(DynamoDB<br/>家族・在庫・履歴)]
+        COMP[Comprehend<br/>感情・疲労分析]
+        REKO[Rekognition<br/>冷蔵庫画像認識]
+        EB[EventBridge<br/>定期実行]
+        SES[SES<br/>週次サマリ]
+    end
+
+    subgraph External["外部サービス：連携を構想"]
+        RAKUTEN[楽天レシピ API<br/>合意済み・公開仕様]
+        AMAZON[Amazon<br/>アフィリエイト経由]
+        OISIX[Oisix 等<br/>合意未取得・Tier 4]
+        ASKEN[あすけん等<br/>合意未取得・構想段階]
+    end
+
+    U1 -->|雑談・写真| LINE
+    U2 -->|独り言| LINE
+    U3 -->|週次受信| LINE
+
+    LINE --> APIGW
+    APIGW --> LAMBDA
+    LAMBDA --> BEDROCK
+    LAMBDA --> COMP
+    LAMBDA --> REKO
+    LAMBDA --> DDB
+
+    BEDROCK -.->|API 経由取得| RAKUTEN
+    LAMBDA -.->|リンク提供| AMAZON
+    LAMBDA -.->|Tier 4 のみ| OISIX
+    LAMBDA -.->|将来構想| ASKEN
+
+    EB --> LAMBDA
+    LAMBDA --> SES
+    SES -->|週次レポート| U3
+
+    style BEDROCK fill:#FCC800,stroke:#2A1F12,stroke-width:2px,color:#000
+    style LINE fill:#06C755,stroke:#2A1F12,color:#fff
+    style RAKUTEN fill:#BF0000,stroke:#2A1F12,color:#fff
+    style OISIX fill:#E8E8E8,stroke:#2A1F12,stroke-dasharray: 5 5,color:#000
+    style ASKEN fill:#E8E8E8,stroke:#2A1F12,stroke-dasharray: 5 5,color:#000
 ```
-┌──────────────────────────────────────────────────────────────┐
-│                    クライアント層                              │
-│  [LINE Bot (Messaging API)] ← 主入口                          │
-│  [Web Chat (フォールバック)] ← 保険                            │
-│  [Web Dashboard (家族マップ・設定)] ← Phase 2                  │
-└──────────────────────────────────────────────────────────────┘
-                       ↓ HTTPS / Webhook
-┌──────────────────────────────────────────────────────────────┐
-│                     API/エッジ層                              │
-│  Amazon API Gateway + Lambda（LINE Webhook受信）              │
-│  Amazon Cognito（家族関係・親等管理）                          │
-└──────────────────────────────────────────────────────────────┘
-                       ↓
-┌──────────────────────────────────────────────────────────────┐
-│                  ビジネスロジック層 (AWS Lambda)               │
-│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐       │
-│  │食材認識   │ │疲労推定   │ │献立生成   │ │家族統合   │      │
-│  │Lambda    │ │Lambda    │ │Lambda    │ │Lambda    │      │
-│  └──────────┘ └──────────┘ └──────────┘ └──────────┘       │
-└──────────────────────────────────────────────────────────────┘
-                       ↓
-┌──────────────────────────────────────────────────────────────┐
-│                   AI/データ層                                 │
-│  Amazon Bedrock (Claude Sonnet 4.6 / Vision) — U1献立推論     │
-│  Amazon Bedrock (Claude Haiku 4.5) — U2体調推定（軽量）        │
-│  Amazon Comprehend — 補助：感情分析                           │
-│  Amazon Rekognition — 補助：食材検出                          │
-│  楽天レシピAPI — 候補レシピ取得（送客モデル、TTL 3h）          │
-│  Amazon DynamoDB — ユーザー・冷蔵庫・履歴・親等関係            │
-│  Amazon S3 — 写真・レポートPDF                                │
-│  Amazon OpenSearch — レシピ検索高度化（Phase 2）              │
-│  Amazon Comprehend Medical — 栄養傾向分析（Phase 2）          │
-└──────────────────────────────────────────────────────────────┘
-                       ↓
-┌──────────────────────────────────────────────────────────────┐
-│                 連携・通知層                                  │
-│  Amazon EventBridge — 朝・退勤前・週次サマリの定期実行        │
-│  Amazon SNS — 家族間プッシュ通知                              │
-│  Amazon SES — 健司への週次サマリメール                        │
-│  Amazon Polly / Transcribe — Phase 2：音声入出力              │
-└──────────────────────────────────────────────────────────────┘
-```
+
+各データソースの合意状態の詳細は本文書の「データソースに関する注記」を参照ください。
 
 ---
 
